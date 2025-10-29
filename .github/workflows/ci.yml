@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['3.4.7']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: bundle install
+    
+    - name: Check syntax
+      run: |
+        find lib -name "*.rb" -exec ruby -c {} \;
+    
+    - name: Build gem
+      run: gem build mcp_agent.gemspec
+    
+    # TODO: Раскомментировать когда добавим тесты
+    # - name: Run tests
+    #   run: bundle exec rspec
+
