@@ -23,7 +23,7 @@ module McpAgent
       @running = false
       
       load_configuration(config_path)
-      load_credentials
+      load_credentials_from_paths
       setup_logging
       setup_mcp_client
       setup_ai_client
@@ -98,8 +98,32 @@ module McpAgent
       raise ErrorHandler::ConfigurationError, "Failed to load configuration: #{e.message}"
     end
 
-    def load_credentials
-      @credentials = Credentials.load
+    def load_credentials_from_paths
+      # Ожидаем, что credentials будут переданы в конфиге уже расшифрованными
+      # Rails приложение должно расшифровать credentials и передать их в config/settings.yml
+      # Или через переменные окружения
+      
+      credentials_config = @config['credentials'] || {}
+      
+      # Проверяем, переданы ли credentials напрямую в конфиге
+      if credentials_config.is_a?(Hash) && credentials_config.key?('openai_api_key')
+        # Credentials переданы напрямую в конфиге (уже расшифрованные Rails приложением)
+        @credentials = credentials_config.transform_keys(&:to_sym)
+      else
+        # Иначе используем переменные окружения
+        @credentials = {
+          openai_api_key: ENV['OPENAI_API_KEY'],
+          mcp_auth_token: ENV['MCP_AUTH_TOKEN'],
+          telegram_token: ENV['TELEGRAM_TOKEN'],
+          rabbitmq_username: ENV['RABBITMQ_USERNAME'],
+          rabbitmq_password: ENV['RABBITMQ_PASSWORD']
+        }
+      end
+      
+      ErrorHandler.log(:info, "✅ Credentials загружены", {
+        component: 'agent',
+        operation: 'load_credentials'
+      })
     rescue => e
       raise ErrorHandler::ConfigurationError, "Failed to load credentials: #{e.message}"
     end

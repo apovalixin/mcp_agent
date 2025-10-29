@@ -6,7 +6,6 @@ require 'faraday'
 require 'ruby_llm'
 
 require_relative 'mcp_agent/version'
-require_relative 'mcp_agent/credentials'
 require_relative 'mcp_agent/base/error_handler'
 require_relative 'mcp_agent/base/mcp_client'
 require_relative 'mcp_agent/base/transport'

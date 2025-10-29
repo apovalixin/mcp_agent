@@ -1,7 +1,7 @@
 # McpAgent
 
 [![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.4.0-ruby.svg)](https://www.ruby-lang.org)
-[![Gem Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://rubygems.org/gems/mcp_agent)
+[![Gem Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://rubygems.org/gems/mcp_agent)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
 > **Status:** ✅ Production ready для Telegram транспорта | ⚠️ RabbitMQ в разработке
@@ -14,8 +14,8 @@
 - **MCP интеграция** - подключение к любому MCP-совместимому серверу
 - **Динамическая загрузка инструментов** - автоматическое обнаружение и использование всех доступных MCP tools
 - **Транспорты из коробки** - Telegram Bot и RabbitMQ для межагентного взаимодействия
-- **AI обработка** - интеграция с OpenAI (GPT-4.1-mini, GPT-4o, GPT-4o-mini)
-- **Безопасность** - AES-256-GCM шифрование credentials (аналог Rails)
+- **AI обработка** - интеграция с OpenAI
+- **Гибкая конфигурация** - простое управление через YAML файлы и переменные окружения
 - **Модульная архитектура** - переиспользуемые компоненты
 - **Логирование** - структурированное JSON логирование
 
@@ -68,13 +68,19 @@ agent:
   version: 1.0.0
   log_level: INFO
 
+# Credentials (расшифрованные) - опционально, если не указаны используются ENV переменные
+credentials:
+  openai_api_key: sk-your-key-here
+  mcp_auth_token: your-token-here
+  telegram_token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+
 # URL вашего MCP сервера
 mcp:
   url: https://your-mcp-server.com/mcp
 
 # AI настройки
 ai:
-  model: gpt-4.1-mini  # или gpt-4o, gpt-4o-mini
+  model: gpt-4.1-mini 
 
 # Транспорты
 transports:
@@ -91,24 +97,34 @@ processing:
     Используй предоставленный контекст из MCP инструментов.
 ```
 
-### 4. Создайте credentials
+### 4. Настройте credentials
 
-```bash
-./credentials_edit.rb
-```
+Есть два способа передачи credentials в гем:
 
-Добавьте в открывшийся редактор:
+**Способ 1: Через конфиг (расшифрованные credentials)**
+
+В `config/settings.yml` добавьте секцию credentials с уже расшифрованными ключами:
 
 ```yaml
-# OpenAI API Key
-openai_api_key: sk-your-key-here
-
-# MCP Server Authentication Token
-mcp_auth_token: Bearer your-token-here
-
-# Telegram Bot Token (опционально)
-telegram_token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+credentials:
+  openai_api_key: sk-your-key-here
+  mcp_auth_token: your-token-here
+  telegram_token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+  rabbitmq_username: guest
+  rabbitmq_password: guest
 ```
+
+**Способ 2: Через переменные окружения**
+
+Если секция `credentials` не содержит ключей, гем автоматически использует переменные окружения:
+
+```bash
+export OPENAI_API_KEY=sk-your-key-here
+export MCP_AUTH_TOKEN=your-token-here
+export TELEGRAM_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+```
+
+> **Для Rails приложений:** Используйте Rails credentials для хранения зашифрованных ключей и передавайте расшифрованные значения через конфиг. См. секцию "Интеграция с Rails" ниже.
 
 ### 5. Создайте главный файл
 
@@ -154,11 +170,18 @@ agent:
   version: 1.0.0            # Опционально: версия (default: 1.0.0)
   log_level: INFO           # Опционально: DEBUG, INFO, WARN, ERROR
 
+credentials:                # Опционально: расшифрованные credentials
+  openai_api_key: sk-...    # Если не указано, используется ENV['OPENAI_API_KEY']
+  mcp_auth_token: Bearer... # Если не указано, используется ENV['MCP_AUTH_TOKEN']
+  telegram_token: 123...    # Если не указано, используется ENV['TELEGRAM_TOKEN']
+  rabbitmq_username: guest  # Если не указано, используется ENV['RABBITMQ_USERNAME']
+  rabbitmq_password: guest  # Если не указано, используется ENV['RABBITMQ_PASSWORD']
+
 mcp:
   url: https://example.com/mcp  # Обязательно: URL MCP сервера
 
 ai:
-  model: gpt-4.1-mini       # Опционально: модель AI (default: gpt-4.1-mini)
+  model: gpt-4.1-mini  
 
 transports:
   rabbitmq:
@@ -175,23 +198,84 @@ processing:
 
 ### Credentials
 
-Credentials хранятся в зашифрованном виде в `config/credentials.yml.enc`.
+Гем ожидает получить **уже расшифрованные** credentials одним из двух способов:
 
-**Команды:**
+**1. Через конфигурационный файл (для разработки)**
 
-```bash
-# Создать/редактировать
-./credentials_edit.rb
+Добавьте расшифрованные credentials прямо в `config/settings.yml`:
 
-# Показать расшифрованные credentials
-./credentials_show.rb
+```yaml
+credentials:
+  openai_api_key: sk-your-key-here
+  mcp_auth_token: your-token-here
+  telegram_token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
 ```
 
-**Master key** хранится в:
-- `config/master.key` (не коммитить в git!)
-- Или в переменной окружения `ENV['MASTER_KEY']`
+**2. Через переменные окружения (для production)**
 
-> **Примечание:** Методы `edit` и `show` автоматически обрабатывают конфликты с переменной окружения `RUBYOPT`, поэтому команды работают корректно в любом окружении.
+Если секция `credentials` пустая или отсутствует, используются ENV переменные:
+- `OPENAI_API_KEY`
+- `MCP_AUTH_TOKEN`
+- `TELEGRAM_TOKEN`
+- `RABBITMQ_USERNAME`
+- `RABBITMQ_PASSWORD`
+
+### Интеграция с Rails (зашифрованные credentials)
+
+Для Rails приложений рекомендуется использовать встроенный механизм `credentials.yml.enc`:
+
+**1. Создайте скрипт для расшифровки** (`lib/tasks/agent.rake`):
+
+```ruby
+namespace :agent do
+  desc "Generate agent config with decrypted credentials"
+  task :generate_config => :environment do
+    config = {
+      'agent' => {
+        'name' => 'my_agent',
+        'version' => '1.0.0',
+        'log_level' => 'INFO'
+      },
+      'credentials' => {
+        'openai_api_key' => Rails.application.credentials.openai_api_key,
+        'mcp_auth_token' => Rails.application.credentials.mcp_auth_token,
+        'telegram_token' => Rails.application.credentials.telegram_token
+      },
+      'mcp' => {
+        'url' => Rails.application.credentials.mcp_url
+      },
+      'processing' => {
+        'system_prompt' => "Твой промпт здесь..."
+      }
+    }
+    
+    File.write('config/agent_settings.yml', config.to_yaml)
+    puts "✅ Config generated with decrypted credentials"
+  end
+end
+```
+
+**2. Добавьте ключи в Rails credentials**:
+
+```bash
+rails credentials:edit
+```
+
+```yaml
+openai_api_key: sk-your-key-here
+mcp_auth_token: Bearer your-token-here
+telegram_token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+mcp_url: https://your-mcp-server.com/mcp
+```
+
+**3. Генерируйте конфиг перед запуском агента**:
+
+```bash
+rake agent:generate_config
+ruby my_agent.rb  # использует config/agent_settings.yml
+```
+
+> **Безопасность:** Файл `config/agent_settings.yml` с расшифрованными credentials добавьте в `.gitignore`!
 
 ### Программный доступ к Agent
 
@@ -315,7 +399,7 @@ bundle exec rspec
 gem build mcp_agent.gemspec
 
 # Установить локально
-gem install ./mcp_agent-1.0.1.gem
+gem install ./mcp_agent-1.1.0.gem
 ```
 
 ## 📝 Примеры
@@ -389,11 +473,12 @@ MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
 ## 🗺️ Roadmap
 
 - [x] v1.0.0 - Базовая функциональность + Telegram
-- [ ] v1.1.0 - Полная поддержка RabbitMQ
-- [ ] v1.2.0 - Дополнительные транспорты (HTTP, WebSocket)
+- [x] v1.1.0 - Улучшенная работа с credentials, интеграция с Rails
+- [ ] v1.2.0 - Полная поддержка RabbitMQ
+- [ ] v1.3.0 - Дополнительные транспорты (HTTP, WebSocket)
 - [ ] v2.0.0 - Поддержка других AI провайдеров (Anthropic, Google)
 
 ---
 
-**Версия:** 1.0.0 | **Ruby:** >= 3.4.0 | **Лицензия:** MIT
+**Версия:** 1.1.0 | **Ruby:** >= 3.4.0 | **Лицензия:** MIT
 

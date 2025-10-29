@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-10-29
+
+### Changed
+- **BREAKING**: Removed built-in credentials encryption from gem
+  - Credentials management now delegated to Rails applications or external scripts
+  - Gem expects already decrypted credentials via config or ENV variables
+  
+### Removed
+- Removed `McpAgent::Credentials` class
+- Removed `credentials_edit.rb` and `credentials_show.rb` scripts
+- Removed dependency on internal credentials encryption
+
+### Added
+- New flexible credentials loading mechanism:
+  - Support for passing decrypted credentials directly in `config/settings.yml`
+  - Automatic fallback to environment variables
+- Comprehensive Rails integration guide
+  - Example rake task for generating config with decrypted credentials
+  - Best practices for using Rails encrypted credentials
+
+### Improved
+- Better separation of concerns - gem focuses on agent logic, not credentials management
+- Simplified deployment with standard ENV variable support
+- Enhanced documentation with Rails integration examples
+
 ## [1.0.1] - 2025-10-29
 
 ### Fixed
@@ -26,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Universal agent framework with MCP server support
 - Dynamic tool loading from any MCP server
 - Transport layer: Telegram Bot and RabbitMQ
-- AI processing with OpenAI (GPT-4.1-mini by default)
+- AI processing with OpenAI
 - Secure credentials management with AES-256-GCM encryption
 - Modular architecture with reusable components
 - Comprehensive error handling and logging
