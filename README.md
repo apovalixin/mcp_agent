@@ -1,6 +1,6 @@
 # McpAgent
 
-[![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.4.0-ruby.svg)](https://www.ruby-lang.org)
+[![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.4.7-ruby.svg)](https://www.ruby-lang.org)
 [![Gem Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://rubygems.org/gems/mcp_agent)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
@@ -54,7 +54,7 @@ bundle init
 ```ruby
 source 'https://rubygems.org'
 
-ruby '>= 3.4.0'
+ruby '>= 3.4.7'
 
 gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'
 ```
@@ -439,4 +439,4 @@ MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
 
 ---
 
-**Версия:** 1.0.2 | **Ruby:** >= 3.4.0 | **Лицензия:** MIT
+**Версия:** 1.0.2 | **Ruby:** >= 3.4.7 | **Лицензия:** MIT
