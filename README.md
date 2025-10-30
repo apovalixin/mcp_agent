@@ -42,38 +42,37 @@ gem 'mcp_agent', path: '../mcp_agent'
 
 ## 🚀 Быстрый старт
 
-Создайте полнофункционального агента за **3 минуты**!
+Создайте полнофункционального агента за **2 минуты**!
 
 ### 1. Создайте проект
 
 ```bash
 mkdir my_agent && cd my_agent
-bundle init
 ```
 
-### 2. Добавьте gem в Gemfile
-
-```ruby
-source 'https://rubygems.org'
-
-ruby '>= 3.4.7'
-
-gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'
-```
-
-```bash
-bundle install
-```
-
-### 3. Инициализируйте агента
+### 2. Инициализируйте агента
 
 Одна команда создаст всё необходимое:
 
 ```bash
+gem install mcp_agent
+mcp_agent init
+```
+
+Или если у вас уже установлен bundler:
+
+```bash
+# Только для первого раза - установка gem из GitHub
+echo "source 'https://rubygems.org'" > Gemfile
+echo "gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'" >> Gemfile
+bundle install
+
+# Инициализация агента
 bundle exec mcp_agent init
 ```
 
 Эта команда создаст:
+- `Gemfile` - зависимости проекта (если не существует)
 - `config/settings.yml` - конфигурация агента
 - `agent.rb` - главный файл агента
 - `credentials.rb` - скрипт управления секретами
@@ -83,6 +82,12 @@ bundle exec mcp_agent init
 
 ```bash
 bundle exec mcp_agent init my_bot  # Создаст my_bot.rb
+```
+
+### 3. Установите зависимости
+
+```bash
+bundle install
 ```
 
 ### 4. Настройте credentials
@@ -139,7 +144,7 @@ processing:
 ruby agent.rb
 ```
 
-**Готово!** Ваш агент запущен и готов к работе через Telegram.
+**Готово!** 🎉 Ваш агент запущен и готов к работе через Telegram.
 
 ## 🔐 Управление Credentials
 

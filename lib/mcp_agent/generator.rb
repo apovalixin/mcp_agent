@@ -15,6 +15,28 @@ module McpAgent
         puts "\n🚀 Инициализация нового агента McpAgent..."
         puts "─" * 60
         
+        # Создаём или обновляем Gemfile
+        gemfile_source = File.join(templates_dir, 'Gemfile')
+        gemfile_dest = File.join(target_dir, 'Gemfile')
+        
+        if File.exist?(gemfile_dest)
+          # Проверяем, есть ли уже mcp_agent в Gemfile
+          gemfile_content = File.read(gemfile_dest)
+          if gemfile_content.include?('mcp_agent')
+            puts "⚠️  Gemfile уже содержит mcp_agent, пропускаем"
+          else
+            # Добавляем mcp_agent в существующий Gemfile
+            File.open(gemfile_dest, 'a') do |f|
+              f.puts "\n# McpAgent - универсальная платформа для создания интеллектуальных агентов"
+              f.puts "gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'"
+            end
+            puts "✅ Добавлен mcp_agent в существующий Gemfile"
+          end
+        else
+          FileUtils.cp(gemfile_source, gemfile_dest)
+          puts "✅ Создан Gemfile"
+        end
+        
         # Создаём директорию config
         config_dir = File.join(target_dir, 'config')
         FileUtils.mkdir_p(config_dir)
@@ -61,15 +83,18 @@ module McpAgent
         puts "─" * 60
         puts "\n✅ Инициализация завершена!"
         puts "\nСледующие шаги:"
-        puts "  1. Настройте credentials:"
+        puts "  1. Установите зависимости:"
+        puts "     bundle install"
+        puts ""
+        puts "  2. Настройте credentials:"
         puts "     ./credentials.rb edit"
         puts ""
-        puts "  2. Отредактируйте config/settings.yml:"
+        puts "  3. Отредактируйте config/settings.yml:"
         puts "     - Укажите название агента (agent.name)"
         puts "     - Укажите URL вашего MCP сервера (mcp.url)"
         puts "     - Настройте system_prompt под задачу агента"
         puts ""
-        puts "  3. Запустите агента:"
+        puts "  4. Запустите агента:"
         puts "     ruby #{agent_name}.rb"
         puts ""
         

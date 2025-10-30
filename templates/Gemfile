@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+ruby '>= 3.4.7'
+
+# McpAgent - универсальная платформа для создания интеллектуальных агентов
+gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'
+
+# Для локальной разработки mcp_agent раскомментируйте:
+# gem 'mcp_agent', path: '../mcp_agent'
+
