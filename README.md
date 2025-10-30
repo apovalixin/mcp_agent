@@ -28,10 +28,10 @@
 gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'
 ```
 
-Или установите напрямую:
+Затем выполните:
 
 ```bash
-gem install mcp_agent
+bundle install
 ```
 
 Для локальной разработки:
@@ -50,29 +50,20 @@ gem 'mcp_agent', path: '../mcp_agent'
 mkdir my_agent && cd my_agent
 ```
 
-### 2. Инициализируйте агента
-
-Одна команда создаст всё необходимое:
+### 2. Инициализируйте Bundler и установите mcp_agent
 
 ```bash
-gem install mcp_agent
-mcp_agent init
+bundle init
+bundle add mcp_agent --git https://github.com/apovalixin/mcp_agent.git
 ```
 
-Или если у вас уже установлен bundler:
+### 3. Инициализируйте агента
 
 ```bash
-# Только для первого раза - установка gem из GitHub
-echo "source 'https://rubygems.org'" > Gemfile
-echo "gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'" >> Gemfile
-bundle install
-
-# Инициализация агента
 bundle exec mcp_agent init
 ```
 
 Эта команда создаст:
-- `Gemfile` - зависимости проекта (если не существует)
 - `config/settings.yml` - конфигурация агента
 - `agent.rb` - главный файл агента
 - `credentials.rb` - скрипт управления секретами
@@ -82,12 +73,6 @@ bundle exec mcp_agent init
 
 ```bash
 bundle exec mcp_agent init my_bot  # Создаст my_bot.rb
-```
-
-### 3. Установите зависимости
-
-```bash
-bundle install
 ```
 
 ### 4. Настройте credentials
@@ -331,8 +316,11 @@ bundle install
 # Собрать gem
 gem build mcp_agent.gemspec
 
-# Установить локально
+# Установить локально (опционально)
 gem install ./mcp_agent-1.0.3.gem
+
+# Или использовать через path в Gemfile другого проекта
+# gem 'mcp_agent', path: '../mcp_agent'
 ```
 
 ## 📝 Примеры

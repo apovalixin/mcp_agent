@@ -22,7 +22,7 @@ when 'version', '-v', '--version'
 when 'help', '-h', '--help', nil
   puts <<~HELP
     
-    🤖 McpAgent CLI
+    🤖 McpAgent CLI - Универсальная платформа для создания интеллектуальных агентов
     
     Использование:
       bundle exec mcp_agent <команда> [опции]
@@ -39,10 +39,18 @@ when 'help', '-h', '--help', nil
       bundle exec mcp_agent install_credentials
       bundle exec mcp_agent version
     
-    После инициализации:
-      1. ./credentials.rb edit     # Настроить credentials
-      2. nano config/settings.yml  # Настроить конфигурацию
-      3. ruby agent.rb             # Запустить агента
+    Быстрый старт для нового проекта:
+      1. mkdir my_agent && cd my_agent
+      2. bundle init
+      3. bundle add mcp_agent --git https://github.com/apovalixin/mcp_agent.git
+      4. bundle exec mcp_agent init
+      5. ./credentials.rb edit
+      6. Настройте config/settings.yml
+      7. ruby agent.rb
+    
+    Документация:
+      README:      https://github.com/apovalixin/mcp_agent/blob/main/README.md
+      QUICKSTART:  https://github.com/apovalixin/mcp_agent/blob/main/QUICKSTART.md
     
   HELP
   
