@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'mcp_agent'
+
+command = ARGV[0]
+
+case command
+when 'install_credentials', 'credentials:install'
+  puts "\n🔐 Установка системы управления credentials..."
+  McpAgent::Generator.install_credentials_scripts('.')
+  
+when 'version', '-v', '--version'
+  puts "McpAgent v#{McpAgent::VERSION}"
+  
+when 'help', '-h', '--help', nil
+  puts <<~HELP
+    
+    🤖 McpAgent CLI
+    
+    Использование:
+      bundle exec mcp_agent <команда>
+    
+    Доступные команды:
+      install_credentials    Установить скрипт управления credentials
+      version               Показать версию gem
+      help                  Показать эту справку
+    
+    Примеры:
+      bundle exec mcp_agent install_credentials
+      bundle exec mcp_agent version
+    
+    После установки credentials используйте:
+      ./credentials.rb edit
+      ./credentials.rb show
+    
+  HELP
+  
+else
+  puts "❌ Неизвестная команда: #{command}"
+  puts "Используйте: bundle exec mcp_agent help"
+  exit 1
+end
+

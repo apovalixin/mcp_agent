@@ -33,7 +33,9 @@ Gem::Specification.new do |spec|
   spec.metadata['documentation_uri'] = "#{spec.homepage}/blob/main/README.md"
 
   # Указываем файлы для включения в gem
-  spec.files = Dir.glob('{lib}/**/*') + %w[README.md LICENSE.txt CHANGELOG.md]
+  spec.files = Dir.glob('{lib,exe,templates}/**/*') + %w[README.md LICENSE.txt CHANGELOG.md]
+  spec.bindir = 'exe'
+  spec.executables = ['mcp_agent']
   spec.require_paths = ['lib']
 
   # Основные зависимости

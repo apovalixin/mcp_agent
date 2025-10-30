@@ -65,25 +65,13 @@ bundle install
 
 ### 3. Установите скрипт управления credentials
 
-```ruby
-# В консоли Ruby
-require 'mcp_agent'
-McpAgent::Generator.install_credentials_scripts('.')
-```
-
-Или создайте временный скрипт `install.rb`:
-
-```ruby
-#!/usr/bin/env ruby
-require 'bundler/setup'
-require 'mcp_agent'
-
-McpAgent::Generator.install_credentials_scripts('.')
-```
+Одна команда для установки:
 
 ```bash
-ruby install.rb
+bundle exec mcp_agent install_credentials
 ```
+
+Эта команда создаст файл `credentials.rb` в текущей директории.
 
 ### 4. Настройте credentials
 
