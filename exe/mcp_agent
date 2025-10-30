@@ -5,8 +5,13 @@ require 'bundler/setup'
 require 'mcp_agent'
 
 command = ARGV[0]
+agent_name = ARGV[1] || 'agent'
 
 case command
+when 'init'
+  puts "\n🚀 Инициализация нового агента..."
+  McpAgent::Generator.init_agent('.', agent_name: agent_name)
+  
 when 'install_credentials', 'credentials:install'
   puts "\n🔐 Установка системы управления credentials..."
   McpAgent::Generator.install_credentials_scripts('.')
@@ -20,20 +25,24 @@ when 'help', '-h', '--help', nil
     🤖 McpAgent CLI
     
     Использование:
-      bundle exec mcp_agent <команда>
+      bundle exec mcp_agent <команда> [опции]
     
     Доступные команды:
-      install_credentials    Установить скрипт управления credentials
+      init [name]           Инициализировать новый проект агента (по умолчанию: agent)
+      install_credentials   Установить только скрипт управления credentials
       version               Показать версию gem
       help                  Показать эту справку
     
     Примеры:
+      bundle exec mcp_agent init                    # Создаст agent.rb
+      bundle exec mcp_agent init my_bot             # Создаст my_bot.rb
       bundle exec mcp_agent install_credentials
       bundle exec mcp_agent version
     
-    После установки credentials используйте:
-      ./credentials.rb edit
-      ./credentials.rb show
+    После инициализации:
+      1. ./credentials.rb edit     # Настроить credentials
+      2. nano config/settings.yml  # Настроить конфигурацию
+      3. ruby agent.rb             # Запустить агента
     
   HELP
   

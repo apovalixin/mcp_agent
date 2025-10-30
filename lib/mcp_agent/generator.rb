@@ -8,7 +8,77 @@ module McpAgent
   # ==============================================================================
   module Generator
     class << self
-      # Установить скрипты управления credentials в проект
+      # Инициализировать новый проект агента
+      def init_agent(target_dir = '.', agent_name: 'agent')
+        templates_dir = File.expand_path('../../templates', __dir__)
+        
+        puts "\n🚀 Инициализация нового агента McpAgent..."
+        puts "─" * 60
+        
+        # Создаём директорию config
+        config_dir = File.join(target_dir, 'config')
+        FileUtils.mkdir_p(config_dir)
+        puts "✅ Создана директория config/"
+        
+        # Копируем settings.yml
+        settings_source = File.join(templates_dir, 'settings.yml')
+        settings_dest = File.join(config_dir, 'settings.yml')
+        
+        if File.exist?(settings_dest)
+          puts "⚠️  config/settings.yml уже существует, пропускаем"
+        else
+          FileUtils.cp(settings_source, settings_dest)
+          puts "✅ Создан config/settings.yml"
+        end
+        
+        # Копируем agent.rb
+        agent_source = File.join(templates_dir, 'agent.rb')
+        agent_dest = File.join(target_dir, "#{agent_name}.rb")
+        
+        if File.exist?(agent_dest)
+          puts "⚠️  #{agent_name}.rb уже существует, пропускаем"
+        else
+          FileUtils.cp(agent_source, agent_dest)
+          File.chmod(0755, agent_dest)
+          puts "✅ Создан #{agent_name}.rb"
+        end
+        
+        # Устанавливаем credentials скрипт
+        credentials_source = File.join(templates_dir, 'credentials.rb')
+        credentials_dest = File.join(target_dir, 'credentials.rb')
+        
+        if File.exist?(credentials_dest)
+          puts "⚠️  credentials.rb уже существует, пропускаем"
+        else
+          FileUtils.cp(credentials_source, credentials_dest)
+          File.chmod(0755, credentials_dest)
+          puts "✅ Создан credentials.rb"
+        end
+        
+        # Проверяем/создаём .gitignore
+        ensure_gitignore(target_dir)
+        
+        puts "─" * 60
+        puts "\n✅ Инициализация завершена!"
+        puts "\nСледующие шаги:"
+        puts "  1. Настройте credentials:"
+        puts "     ./credentials.rb edit"
+        puts ""
+        puts "  2. Отредактируйте config/settings.yml:"
+        puts "     - Укажите название агента (agent.name)"
+        puts "     - Укажите URL вашего MCP сервера (mcp.url)"
+        puts "     - Настройте system_prompt под задачу агента"
+        puts ""
+        puts "  3. Запустите агента:"
+        puts "     ruby #{agent_name}.rb"
+        puts ""
+        
+      rescue => e
+        puts "\n❌ Ошибка инициализации: #{e.message}"
+        raise
+      end
+      
+      # Установить скрипты управления credentials в проект (для обратной совместимости)
       def install_credentials_scripts(target_dir = '.')
         templates_dir = File.expand_path('../../templates', __dir__)
         

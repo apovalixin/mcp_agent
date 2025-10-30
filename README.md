@@ -1,7 +1,7 @@
 # McpAgent
 
 [![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.4.7-ruby.svg)](https://www.ruby-lang.org)
-[![Gem Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://rubygems.org/gems/mcp_agent)
+[![Gem Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://rubygems.org/gems/mcp_agent)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
 > **Статус:** ✅ Production ready для Telegram транспорта | ⚠️ RabbitMQ в разработке
@@ -42,7 +42,9 @@ gem 'mcp_agent', path: '../mcp_agent'
 
 ## 🚀 Быстрый старт
 
-### 1. Создайте структуру проекта
+Создайте полнофункционального агента за **3 минуты**!
+
+### 1. Создайте проект
 
 ```bash
 mkdir my_agent && cd my_agent
@@ -63,15 +65,25 @@ gem 'mcp_agent', git: 'https://github.com/apovalixin/mcp_agent.git'
 bundle install
 ```
 
-### 3. Установите скрипт управления credentials
+### 3. Инициализируйте агента
 
-Одна команда для установки:
+Одна команда создаст всё необходимое:
 
 ```bash
-bundle exec mcp_agent install_credentials
+bundle exec mcp_agent init
 ```
 
-Эта команда создаст файл `credentials.rb` в текущей директории.
+Эта команда создаст:
+- `config/settings.yml` - конфигурация агента
+- `agent.rb` - главный файл агента
+- `credentials.rb` - скрипт управления секретами
+- `.gitignore` - с настройками безопасности
+
+Вы можете указать свое название для главного файла:
+
+```bash
+bundle exec mcp_agent init my_bot  # Создаст my_bot.rb
+```
 
 ### 4. Настройте credentials
 
@@ -79,7 +91,7 @@ bundle exec mcp_agent install_credentials
 ./credentials.rb edit
 ```
 
-Откроется текстовый редактор (nano) для редактирования credentials:
+Откроется редактор (nano) для настройки секретов:
 
 ```yaml
 # OpenAI API Key (обязательно)
@@ -96,34 +108,24 @@ rabbitmq_username: guest
 rabbitmq_password: guest
 ```
 
-Сохраните и закройте редактор. Credentials будут автоматически зашифрованы.
+Сохраните и закройте редактор (Ctrl+O, Enter, Ctrl+X).
 
-### 5. Создайте конфигурацию агента
+### 5. Отредактируйте конфигурацию
 
-Создайте файл `config/settings.yml`:
+Откройте `config/settings.yml` и настройте:
 
 ```yaml
 agent:
-  name: my_agent
+  name: my_agent              # Название вашего агента
   version: 1.0.0
   log_level: INFO
 
-# URL вашего MCP сервера
 mcp:
-  url: https://your-mcp-server.com/mcp
+  url: https://your-mcp-server.com/mcp  # URL вашего MCP сервера
 
-# AI настройки
 ai:
-  model: gpt-4.1-mini 
+  model: gpt-4.1-mini
 
-# Транспорты
-transports:
-  rabbitmq:
-    enabled: true
-    host: localhost
-    port: 5672
-
-# Промпт для вашего агента
 processing:
   system_prompt: |
     Ты - интеллектуальный помощник.
@@ -131,37 +133,10 @@ processing:
     Используй предоставленный контекст из MCP инструментов.
 ```
 
-### 6. Создайте главный файл агента
-
-Создайте `my_agent.rb`:
-
-```ruby
-#!/usr/bin/env ruby
-# frozen_string_literal: true
-
-require 'bundler/setup'
-require 'mcp_agent'
-
-# Создание и запуск агента
-agent = McpAgent::Agent.new(config_path: 'config/settings.yml')
-
-puts ""
-puts "🤖 #{agent.name} v#{agent.version}"
-puts ""
-puts "📡 Настройка транспортов для взаимодействия:"
-puts ""
-
-agent.setup_transports
-puts ""
-
-agent.run
-```
-
-### 7. Запустите агента
+### 6. Запустите агента
 
 ```bash
-chmod +x my_agent.rb
-ruby my_agent.rb
+ruby agent.rb
 ```
 
 **Готово!** Ваш агент запущен и готов к работе через Telegram.
@@ -352,7 +327,7 @@ bundle install
 gem build mcp_agent.gemspec
 
 # Установить локально
-gem install ./mcp_agent-1.0.2.gem
+gem install ./mcp_agent-1.0.3.gem
 ```
 
 ## 📝 Примеры
@@ -421,10 +396,11 @@ MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
 - [x] v1.0.0 - Базовая функциональность + Telegram
 - [x] v1.0.1 - Первая версия credentials management
 - [x] v1.0.2 - Улучшенная система credentials с единым скриптом
+- [x] v1.0.3 - Генератор агентов (команда `init`)
 - [ ] v1.1.0 - Полная поддержка RabbitMQ
 - [ ] v1.2.0 - Дополнительные транспорты (HTTP, WebSocket)
 - [ ] v2.0.0 - Поддержка других AI провайдеров (Anthropic, Google)
 
 ---
 
-**Версия:** 1.0.2 | **Ruby:** >= 3.4.7 | **Лицензия:** MIT
+**Версия:** 1.0.3 | **Ruby:** >= 3.4.7 | **Лицензия:** MIT
