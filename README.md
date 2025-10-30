@@ -4,23 +4,23 @@
 [![Gem Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://rubygems.org/gems/mcp_agent)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
-> **Статус:** ✅ Production ready для Telegram транспорта | ⚠️ RabbitMQ в разработке
+> **Статус:** Production ready для Telegram транспорта | ⚠️ RabbitMQ в разработке
 
 Универсальная платформа для быстрого создания интеллектуальных агентов с поддержкой MCP (Model Context Protocol).
 
-## 🎯 Возможности
+## Возможности
 
 - **Быстрое создание агентов** - создайте полнофункционального агента за 5 минут
 - **MCP интеграция** - подключение к любому MCP-совместимому серверу
 - **Динамическая загрузка инструментов** - автоматическое обнаружение и использование всех доступных MCP tools
 - **Транспорты из коробки** - Telegram Bot и RabbitMQ для межагентного взаимодействия
 - **AI обработка** - интеграция с OpenAI
-- **🔐 Безопасное хранение credentials** - зашифрованные credentials в стиле Rails
+- **Безопасное хранение credentials** - зашифрованные credentials в стиле Rails
 - **Гибкая конфигурация** - простое управление через YAML файлы и переменные окружения
 - **Модульная архитектура** - переиспользуемые компоненты
 - **Логирование** - структурированное JSON логирование
 
-## 📦 Установка
+## Установка
 
 Добавьте в ваш `Gemfile`:
 
@@ -40,7 +40,7 @@ bundle install
 gem 'mcp_agent', path: '../mcp_agent'
 ```
 
-## 🚀 Быстрый старт
+## Быстрый старт
 
 Создайте полнофункционального агента за **2 минуты**!
 
@@ -129,9 +129,9 @@ processing:
 ruby agent.rb
 ```
 
-**Готово!** 🎉 Ваш агент запущен и готов к работе через Telegram.
+**Готово!** Ваш агент запущен и готов к работе через Telegram.
 
-## 🔐 Управление Credentials
+## Управление Credentials
 
 ### Основные команды
 
@@ -145,31 +145,13 @@ ruby agent.rb
 # Справка
 ./credentials.rb
 ```
-
-### Приоритеты загрузки
-
-Агент автоматически загружает credentials в следующем порядке:
-
-1. **Зашифрованный файл** `config/credentials.yml.enc` (рекомендуется)
-2. **Конфигурация** из `config/settings.yml` секции `credentials`
-3. **Переменные окружения** (`OPENAI_API_KEY`, `MCP_AUTH_TOKEN`, и т.д.)
-
 ### Безопасность
 
 - `config/credentials.yml.enc` - зашифрованный файл (безопасно коммитить в git)
 - `config/master.key` - ключ шифрования (**НЕ коммитить в git!**)
 - Автоматически добавляется в `.gitignore`
 
-### Для новых разработчиков
-
-Если вы клонировали проект:
-
-1. Запросите файл `config/master.key` у администратора
-2. Поместите его в директорию `config/`
-3. Убедитесь в правах доступа: `chmod 600 config/master.key`
-4. Проверьте: `./credentials.rb show`
-
-## 📚 Подробная документация
+## Подробная документация
 
 ### Структура конфигурации
 
@@ -196,30 +178,6 @@ transports:
 processing:
   system_prompt: |          # Обязательно: промпт для AI
     Описание роли агента...
-```
-
-### Программный доступ к Agent
-
-```ruby
-require 'mcp_agent'
-
-# Создание агента
-agent = McpAgent::Agent.new(config_path: 'config/settings.yml')
-
-# Обработка запроса напрямую
-response = agent.process_query("Какая погода сегодня?")
-puts response[:content][0][:text]
-
-# Настройка транспортов
-agent.setup_transports
-
-# Запуск (блокирующий)
-agent.run
-
-# Или запуск с ручным управлением
-agent.start
-sleep 100
-agent.stop
 ```
 
 ### Создание специализированных агентов
@@ -250,40 +208,9 @@ processing:
     Помогаешь клиентам решать проблемы.
 ```
 
-## 🏗️ Архитектура
+## Транспорты
 
-```
-┌─────────────────────────────────────────┐
-│         Пользователи                    │
-│    (Telegram, CLI, другие агенты)       │
-└─────────────────┬───────────────────────┘
-                  │
-         ┌────────▼────────┐
-         │  Transports     │
-         │  - Telegram     │
-         │  - RabbitMQ     │
-         └────────┬────────┘
-                  │
-         ┌────────▼────────┐
-         │   Agent Core    │
-         │  - AI Process   │
-         │  - Context      │
-         └────────┬────────┘
-                  │
-         ┌────────▼────────┐
-         │   MCP Client    │
-         │ (Dynamic Tools) │
-         └────────┬────────┘
-                  │
-         ┌────────▼────────┐
-         │   MCP Server    │
-         │   (Data Store)  │
-         └─────────────────┘
-```
-
-## 🔌 Транспорты
-
-### Telegram Bot ✅ Production Ready
+### Telegram Bot Production Ready
 
 Автоматически активируется при наличии `telegram_token` в credentials.
 
@@ -301,73 +228,6 @@ processing:
 - Broadcast
 - RPC паттерн
 
-**Статус:** Базовая структура готова, активная разработка. Ожидается в v1.1.0.
-
-## 🛠️ Разработка
-
-```bash
-# Клонировать репозиторий
-git clone https://github.com/apovalixin/mcp_agent.git
-cd mcp_agent
-
-# Установить зависимости
-bundle install
-
-# Собрать gem
-gem build mcp_agent.gemspec
-
-# Установить локально (опционально)
-gem install ./mcp_agent-1.0.3.gem
-
-# Или использовать через path в Gemfile другого проекта
-# gem 'mcp_agent', path: '../mcp_agent'
-```
-
-## 📝 Примеры
-
-### Пример 1: Простой агент
-
-```ruby
-require 'mcp_agent'
-
-agent = McpAgent::Agent.new
-agent.setup_transports
-agent.run
-```
-
-### Пример 2: Обработка запроса
-
-```ruby
-require 'mcp_agent'
-
-agent = McpAgent::Agent.new
-response = agent.process_query("Расскажи о компании")
-puts response[:content][0][:text]
-```
-
-### Пример 3: Работа с credentials программно
-
-```ruby
-require 'mcp_agent'
-
-# Просмотр credentials
-McpAgent::Credentials.show
-
-# Чтение credentials как Hash
-creds = McpAgent::Credentials.read
-puts creds[:openai_api_key]
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -am 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 📄 Лицензия
 
 MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
@@ -379,10 +239,6 @@ MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
 - [MCP Protocol](https://modelcontextprotocol.io/)
 - [OpenAI API](https://platform.openai.com/docs)
 - [Telegram Bot API](https://core.telegram.org/bots/api)
-
-## 📞 Поддержка
-
-- GitHub Issues: https://github.com/apovalixin/mcp_agent/issues
 
 ## 🗺️ Roadmap
 
