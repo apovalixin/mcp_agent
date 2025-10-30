@@ -44,6 +44,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'telegram-bot', '~> 0.16' # Telegram Bot API
   spec.add_dependency 'bunny', '~> 2.24'        # RabbitMQ клиент
   
+  # Credentials шифрование
+  spec.add_dependency 'activesupport', '~> 8.0' # Encrypted credentials
+  
   # Утилиты
   spec.add_dependency 'json', '~> 2.12'
   spec.add_dependency 'yaml', '~> 0.4'

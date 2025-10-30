@@ -99,31 +99,62 @@ module McpAgent
     end
 
     def load_credentials_from_paths
-      # Ожидаем, что credentials будут переданы в конфиге уже расшифрованными
-      # Rails приложение должно расшифровать credentials и передать их в config/settings.yml
-      # Или через переменные окружения
+      # Приоритеты загрузки credentials (по порядку):
+      # 1. Расшифрованные из config/credentials.yml.enc (если существует)
+      # 2. Напрямую из config/settings.yml (для Rails приложений)
+      # 3. Из переменных окружения (для production)
       
       credentials_config = @config['credentials'] || {}
       
-      # Проверяем, переданы ли credentials напрямую в конфиге
+      # 1. Попытка загрузить из зашифрованного файла credentials.yml.enc
+      if File.exist?('config/credentials.yml.enc') && File.exist?('config/master.key')
+        begin
+          encrypted_creds = Credentials.read
+          @credentials = encrypted_creds
+          
+          ErrorHandler.log(:info, "✅ Credentials загружены из config/credentials.yml.enc", {
+            component: 'agent',
+            operation: 'load_credentials',
+            source: 'encrypted_file'
+          })
+          return
+        rescue => e
+          ErrorHandler.log(:warn, "⚠️  Не удалось прочитать credentials.yml.enc: #{e.message}", {
+            component: 'agent',
+            operation: 'load_credentials'
+          })
+          # Продолжаем к следующему варианту
+        end
+      end
+      
+      # 2. Проверяем, переданы ли credentials напрямую в конфиге
       if credentials_config.is_a?(Hash) && credentials_config.key?('openai_api_key')
         # Credentials переданы напрямую в конфиге (уже расшифрованные Rails приложением)
         @credentials = credentials_config.transform_keys(&:to_sym)
-      else
-        # Иначе используем переменные окружения
-        @credentials = {
-          openai_api_key: ENV['OPENAI_API_KEY'],
-          mcp_auth_token: ENV['MCP_AUTH_TOKEN'],
-          telegram_token: ENV['TELEGRAM_TOKEN'],
-          rabbitmq_username: ENV['RABBITMQ_USERNAME'],
-          rabbitmq_password: ENV['RABBITMQ_PASSWORD']
-        }
+        
+        ErrorHandler.log(:info, "✅ Credentials загружены из config/settings.yml", {
+          component: 'agent',
+          operation: 'load_credentials',
+          source: 'config_file'
+        })
+        return
       end
       
-      ErrorHandler.log(:info, "✅ Credentials загружены", {
+      # 3. Используем переменные окружения
+      @credentials = {
+        openai_api_key: ENV['OPENAI_API_KEY'],
+        mcp_auth_token: ENV['MCP_AUTH_TOKEN'],
+        telegram_token: ENV['TELEGRAM_TOKEN'],
+        rabbitmq_username: ENV['RABBITMQ_USERNAME'],
+        rabbitmq_password: ENV['RABBITMQ_PASSWORD']
+      }
+      
+      ErrorHandler.log(:info, "✅ Credentials загружены из переменных окружения", {
         component: 'agent',
-        operation: 'load_credentials'
+        operation: 'load_credentials',
+        source: 'env_variables'
       })
+      
     rescue => e
       raise ErrorHandler::ConfigurationError, "Failed to load credentials: #{e.message}"
     end
