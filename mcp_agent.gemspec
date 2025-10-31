@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   
   spec.homepage      = 'https://github.com/apovalixin/mcp_agent'
   spec.license       = 'MIT'
-  spec.required_ruby_version = '>= 3.4.0'
+  spec.required_ruby_version = '> 3.4'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage

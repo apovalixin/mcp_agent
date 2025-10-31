@@ -1,12 +1,18 @@
 # McpAgent
 
-[![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.4.7-ruby.svg)](https://www.ruby-lang.org)
+[![Ruby Version](https://img.shields.io/badge/ruby-%3E%203.4-ruby.svg)](https://www.ruby-lang.org)
 [![Gem Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://rubygems.org/gems/mcp_agent)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
 > **Статус:** Production ready для Telegram транспорта | ⚠️ RabbitMQ в разработке
 
 Универсальная платформа для быстрого создания интеллектуальных агентов с поддержкой MCP (Model Context Protocol).
+
+## ⚙️ Системные требования
+
+- **Ruby:** > 3.4
+- **Bundler:** для управления зависимостями
+- **Зависимости гема:** устанавливаются автоматически при `bundle install` или `gem install mcp_agent`
 
 ## Возможности
 
@@ -252,4 +258,4 @@ MIT License. См. [LICENSE.txt](LICENSE.txt) для деталей.
 
 ---
 
-**Версия:** 1.0.3 | **Ruby:** >= 3.4.7 | **Лицензия:** MIT
+**Версия:** 1.0.3 | **Ruby:** > 3.4 | **Лицензия:** MIT
